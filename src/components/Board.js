@@ -10,26 +10,6 @@ class Board extends React.Component {
     };
   }
 
-  clickSquare = i => {
-    const squares = this.state.squares.slice();
-    squares[i] = this.state.turn;
-
-    this.setState({
-      squares
-    });
-
-    this.changeTurn();
-  };
-
-  renderSquare = i => {
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => this.clickSquare(i)}
-      />
-    );
-  };
-
   changeTurn = () => {
     if (this.state.turn === "X") {
       this.setState({
@@ -42,8 +22,60 @@ class Board extends React.Component {
     }
   };
 
+  theresAWinner = () => {
+    let winner = false;
+
+    const winCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    let a, b, c;
+
+    winCombinations.forEach(combination => {
+      a = this.state.squares[combination[0]];
+      b = this.state.squares[combination[1]];
+      c = this.state.squares[combination[2]];
+
+      if (a && a === b && a === c) {
+        winner = true;
+      }
+    });
+
+    return winner;
+  };
+
+  clickSquare(i) {
+    if (!this.theresAWinner()) {
+      if (this.state.squares[i] === null) {
+        const squares = this.state.squares.slice();
+        squares[i] = this.state.turn;
+
+        this.setState({
+          squares
+        });
+
+        this.changeTurn();
+      }
+    }
+  }
+
+  renderSquare = i => {
+    return (
+      <Square
+        value={this.state.squares[i]}
+        onClick={() => this.clickSquare(i)}
+      />
+    );
+  };
+
   render() {
-    console.log(this.state.squares);
     return (
       <div>
         <div className="status">Next player: {this.state.turn}</div>
